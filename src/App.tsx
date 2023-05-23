@@ -11,16 +11,18 @@ type Habit = {
 function App() {
   const [habitList, setHabitList] = useState<[] | Habit[]>([ {name: 'Walk for 20 minutes', completed: false} ]);
   const [habitName, setHabitName] = useState<string>('');
-  const [habitCompleted, setHabitCompleted] = useState<boolean>(false);
 
   return (
     <>
       <div className="h-screen w-screen bg-gray-900 flex justify-center items-center">
         <div>
-          <div className="bg-gray-200">
+          <div className="flex flex-col gap-2">
             {
               habitList.map((habitItem, habitIndex) =>
-                <div className="flex justify-between items-center p-2">
+                <div 
+                  className="flex justify-between items-center p-2 bg-gray-300"
+                  onClick={() => console.log(habitItem.name)}
+                >
                   <p className={habitItem.completed ? 'line-through' : ''} >{habitItem.name}</p>
                     <div
                       onClick={
@@ -39,7 +41,6 @@ function App() {
                         :
                         <EmptyCircle className="h-6 w-6"/>
                       }
-
                     </div>
                 </div>
               )
