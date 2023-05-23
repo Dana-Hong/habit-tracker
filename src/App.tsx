@@ -6,22 +6,35 @@ import CheckBoxCircle from "./checkbox-circle-line";
 type Habit = {
   name: string;
   completed: boolean;
+  currentStreak: number;
+  showMenu: boolean;
 }
 
 function App() {
-  const [habitList, setHabitList] = useState<[] | Habit[]>([ {name: 'Walk for 20 minutes', completed: false} ]);
+  const [habitList, setHabitList] = useState<[] | Habit[]>([ {name: 'Walk for 20 minutes', completed: false, currentStreak: 0, showMenu: false } ]);
   const [habitName, setHabitName] = useState<string>('');
-  const [habitCompleted, setHabitCompleted] = useState<boolean>(false);
 
   return (
     <>
       <div className="h-screen w-screen bg-gray-900 flex justify-center items-center">
         <div>
-          <div className="bg-gray-200">
+          <div className="flex flex-col gap-2">
             {
               habitList.map((habitItem, habitIndex) =>
-                <div className="flex justify-between items-center p-2">
-                  <p className={habitItem.completed ? 'line-through' : ''} >{habitItem.name}</p>
+                <div>
+                  <div
+                    onClick={
+                      () => {
+                        setHabitList(prevHabitList => {
+                          return prevHabitList.map((habitItem, index) => {
+                            return (habitIndex === index) ? { ...habitItem, showMenu: !habitItem.showMenu } : habitItem
+                          });
+                        })
+                      }
+                    }
+                    className="flex justify-between items-center p-2 bg-gray-300"
+                  >
+                    <p className={habitItem.completed ? 'line-through' : ''} >{habitItem.name}</p>
                     <div
                       onClick={
                         () => {
@@ -39,8 +52,16 @@ function App() {
                         :
                         <EmptyCircle className="h-6 w-6"/>
                       }
-
                     </div>
+                  </div>
+                  <div
+                    className={`${habitItem.showMenu ? '' : 'hidden'} p-2 border border-t-black bg-gray-300`}
+                  >
+                    <div className="flex justify-between">
+                      <p>Skip</p>
+                      <p>Delete</p>
+                    </div>
+                  </div>
                 </div>
               )
             }
@@ -59,7 +80,15 @@ function App() {
               onClick={
                 () => {
                   if (!habitName) return;
-                  setHabitList(prevHabitList => [...prevHabitList, { name: habitName, completed: false } ]);
+                  setHabitList(prevHabitList => 
+                    [...prevHabitList,
+                      { 
+                        name: habitName,
+                        completed: false,
+                        currentStreak: 0,
+                        showMenu: false
+                      } 
+                    ]);
                   setHabitName('');
                 }
               }
