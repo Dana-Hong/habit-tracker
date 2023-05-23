@@ -1,8 +1,17 @@
 import { useState } from "react";
 
+import EmptyCircle from "./checkbox-blank-circle-line";
+import CheckBoxCircle from "./checkbox-circle-line";
+
+type Habit = {
+  name: string;
+  completed: boolean;
+}
+
 function App() {
-  const [habitList, setHabitList] = useState<[] | string[]>(['Time to conquer!']);
+  const [habitList, setHabitList] = useState<[] | Habit[]>([ {name: 'Walk for 20 minutes', completed: false} ]);
   const [habitName, setHabitName] = useState<string>('');
+  const [habitCompleted, setHabitCompleted] = useState<boolean>(false);
 
   return (
     <>
@@ -10,15 +19,28 @@ function App() {
         <div>
           <div className="bg-gray-200">
             {
-              habitList.map(habitItem =>
+              habitList.map((habitItem, habitIndex) =>
                 <div className="flex justify-between items-center p-2">
-                  <p>{habitItem}</p>
-                  <button
-                    onClick={() => setHabitList(prevHabitList => prevHabitList.slice(0, -1))}
-                    className="text-gray-600 bg-gray-200 px-2 rounded-lg border border-gray-800"
-                    >
-                    x
-                  </button>
+                  <p className={habitItem.completed ? 'line-through' : ''} >{habitItem.name}</p>
+                    <div
+                      onClick={
+                        () => {
+                          setHabitList(prevHabitList => {
+                            return prevHabitList.map((habitItem, index) => {
+                              return (habitIndex === index) ? { ...habitItem, completed: !habitItem.completed } : habitItem
+                            });
+                          })
+                        }
+                      }
+                      >
+                      {
+                        habitItem.completed ? 
+                        <CheckBoxCircle className="h-6 w-6" />
+                        :
+                        <EmptyCircle className="h-6 w-6"/>
+                      }
+
+                    </div>
                 </div>
               )
             }
@@ -37,7 +59,7 @@ function App() {
               onClick={
                 () => {
                   if (!habitName) return;
-                  setHabitList(prevHabitList => [...prevHabitList, habitName]);
+                  setHabitList(prevHabitList => [...prevHabitList, { name: habitName, completed: false } ]);
                   setHabitName('');
                 }
               }
