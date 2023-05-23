@@ -1,8 +1,12 @@
 import { useState } from "react";
 
+import EmptyCircle from "./checkbox-blank-circle-line";
+import CheckBoxCircle from "./checkbox-circle-line";
+
 function App() {
   const [habitList, setHabitList] = useState<[] | string[]>(['Time to conquer!']);
   const [habitName, setHabitName] = useState<string>('');
+  const [habitCompleted, setHabitCompleted] = useState<boolean>(false);
 
   return (
     <>
@@ -13,12 +17,17 @@ function App() {
               habitList.map(habitItem =>
                 <div className="flex justify-between items-center p-2">
                   <p>{habitItem}</p>
-                  <button
-                    onClick={() => setHabitList(prevHabitList => prevHabitList.slice(0, -1))}
-                    className="text-gray-600 bg-gray-200 px-2 rounded-lg border border-gray-800"
-                    >
-                    x
-                  </button>
+                    <div
+                      onClick={() => setHabitList(prevHabitList => prevHabitList.slice(0, -1))}
+                      >
+                      {
+                        habitCompleted ? 
+                        <CheckBoxCircle className="h-6 w-6" />
+                        :
+                        <EmptyCircle className="h-6 w-6"/>
+                      }
+
+                    </div>
                 </div>
               )
             }
