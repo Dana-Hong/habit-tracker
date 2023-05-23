@@ -1,33 +1,54 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import { useState } from "react";
+
 function App() {
-  const [count, setCount] = useState(0)
+  const [habitList, setHabitList] = useState<[] | string[]>(['Time to conquer!']);
+  const [addHabitValue, setAddHabitValue] = useState<string>('');
 
   return (
     <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+      <div className="h-screen w-screen bg-gray-900 flex justify-center items-center">
+        <div>
+          <div className="bg-gray-200">
+            {
+              habitList.map(habitItem =>
+                <div className="flex justify-between items-center p-2">
+                  <p>{habitItem}</p>
+                  <button
+                    onClick={() => setHabitList(prevHabitList => prevHabitList.slice(0, -1))}
+                    className="text-gray-600 bg-gray-200 px-2 rounded-lg border border-gray-800"
+                    >
+                    x
+                  </button>
+                </div>
+              )
+            }
+          </div>
+          <div className="flex flex-col gap-2 mt-2">
+            <input 
+              value={addHabitValue}
+              onChange={(e) => setAddHabitValue(e.target.value)}
+              type="text"
+              name="habit"
+              id="habit"
+              placeholder="Habit name"
+              className="px-1"
+            />
+            <button
+              onClick={
+                () => {
+                  setHabitList(prevHabitList => [...prevHabitList, addHabitValue]);
+                  setAddHabitValue('');
+                }
+              }
+              className="text-slate-200 bg-gray-700 py-2 px-4 rounded-lg border border-gray-800"
+              >
+              Add new habit
+            </button>
+          </div>
+        </div>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
     </>
-  )
+  );
 }
 
-export default App
+export default App;
