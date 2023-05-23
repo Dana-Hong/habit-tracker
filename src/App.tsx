@@ -2,7 +2,7 @@ import { useState } from "react";
 
 function App() {
   const [habitList, setHabitList] = useState<[] | string[]>(['Time to conquer!']);
-  const [addHabitValue, setAddHabitValue] = useState<string>('');
+  const [habitName, setHabitName] = useState<string>('');
 
   return (
     <>
@@ -25,8 +25,8 @@ function App() {
           </div>
           <div className="flex flex-col gap-2 mt-2">
             <input 
-              value={addHabitValue}
-              onChange={(e) => setAddHabitValue(e.target.value)}
+              value={habitName}
+              onChange={(e) => setHabitName(e.target.value)}
               type="text"
               name="habit"
               id="habit"
@@ -36,8 +36,9 @@ function App() {
             <button
               onClick={
                 () => {
-                  setHabitList(prevHabitList => [...prevHabitList, addHabitValue]);
-                  setAddHabitValue('');
+                  if (!habitName) return;
+                  setHabitList(prevHabitList => [...prevHabitList, habitName]);
+                  setHabitName('');
                 }
               }
               className="text-slate-200 bg-gray-700 py-2 px-4 rounded-lg border border-gray-800"
