@@ -89,7 +89,19 @@ function App() {
                   >
                     <div className="flex justify-between">
                       <p>Skip</p>
-                      <p>Delete</p>
+                      <div
+                        className="p-2 border border-gray-900 cursor-pointer"
+                        onClick={
+                          () =>
+                          setHabitList(prevHabitList => {
+                            return prevHabitList.filter((habitItem, index) => {
+                              if (habitIndex !== index) return habitItem
+                            });
+                          })
+                        }
+                        >
+                        <p>Delete</p>
+                      </div>
                     </div>
                     <p>Current Streak: {habitItem.currentStreak}</p>
                   </div>
