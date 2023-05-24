@@ -14,9 +14,9 @@ type Habit = {
 }
 
 function App() {
-  const [habitList, setHabitList] = useState<[] | Habit[]>([ {name: 'Walk for 20 minutes', completed: false, currentStreak: 0, showMenu: false, /*startDate: startOfDay(Date.now())*/ } ]);
+  const [habitList, setHabitList] = useState<[] | Habit[]>(JSON.parse(localStorage.getItem('habitList') as string));
   const [habitName, setHabitName] = useState<string>('');
-  const [previousDate, setPreviousDate] = useState<Date>(new Date(JSON.parse(localStorage.getItem('prevDate') as string)));
+  const [previousDate] = useState<Date>(new Date(JSON.parse(localStorage.getItem('prevDate') as string)));
 
   useEffect(() => {
     if (isYesterday(previousDate)) {
@@ -39,6 +39,10 @@ function App() {
     }
 
   }, []);
+
+  useEffect(() => {
+    localStorage.setItem('habitList', JSON.stringify(habitList));
+  }, [habitList]);
 
   return (
     <>
