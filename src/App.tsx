@@ -1,4 +1,6 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+
+import { isYesterday, startOfDay } from "date-fns";
 
 import EmptyCircle from "./checkbox-blank-circle-line";
 import CheckBoxCircle from "./checkbox-circle-line";
@@ -8,11 +10,35 @@ type Habit = {
   completed: boolean;
   currentStreak: number;
   showMenu: boolean;
+  // startDate: Date;
 }
 
 function App() {
-  const [habitList, setHabitList] = useState<[] | Habit[]>([ {name: 'Walk for 20 minutes', completed: false, currentStreak: 0, showMenu: false } ]);
+  const [habitList, setHabitList] = useState<[] | Habit[]>([ {name: 'Walk for 20 minutes', completed: false, currentStreak: 0, showMenu: false, /*startDate: startOfDay(Date.now())*/ } ]);
   const [habitName, setHabitName] = useState<string>('');
+  const [previousDate, setPreviousDate] = useState<Date>(new Date(JSON.parse(localStorage.getItem('prevDate') as string)));
+
+  useEffect(() => {
+    if (isYesterday(previousDate)) {
+      setHabitList(prevHabitList => {
+        return prevHabitList.map(habitItem => {
+          if (habitItem.completed) {
+            return {
+              ...habitItem,
+              completed: false
+            }
+          }
+          return {
+            ...habitItem,
+            currentStreak: 0
+          }
+        });
+      });
+
+      localStorage.setItem('prevDate', JSON.stringify(startOfDay(new Date(Date.now()))));
+    }
+
+  }, []);
 
   return (
     <>
@@ -21,7 +47,7 @@ function App() {
           <div className="flex flex-col gap-2">
             {
               habitList.map((habitItem, habitIndex) =>
-                <div>
+                <div key={habitIndex}>
                   <div
                     onClick={
                       () => {
@@ -40,7 +66,7 @@ function App() {
                         () => {
                           setHabitList(prevHabitList => {
                             return prevHabitList.map((habitItem, index) => {
-                              return (habitIndex === index) ? { ...habitItem, completed: !habitItem.completed } : habitItem
+                              return (habitIndex === index) ? { ...habitItem, completed: !habitItem.completed, currentStreak: !habitItem.completed ? habitItem.currentStreak + 1 : habitItem.currentStreak - 1 } : habitItem
                             });
                           })
                         }
@@ -61,6 +87,7 @@ function App() {
                       <p>Skip</p>
                       <p>Delete</p>
                     </div>
+                    <p>Current Streak: {habitItem.currentStreak}</p>
                   </div>
                 </div>
               )
