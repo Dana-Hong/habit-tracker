@@ -26,17 +26,6 @@ function App() {
   const [habitName, setHabitName] = useState<string>('');
   const [previousDate] = useState<Date>(new Date(JSON.parse(localStorage.getItem('prevDate') as string)));
 
-
-  /**
-   * use startOfWeek to get the beginning of the week from Today's date
-   * use endOfWeek to get the beginning of the week from Today's date
-   * use eachDayofInteral function get generate array of Dates using startOfWeek and endOfWeek
-   * use map to convert each date into object that has the date, and "completed" field
-   * use this array to create habitYear
-   * each "Date object" needs to know whether it is complete or not
-   * It is complete when it was completed on that day
-   */
-
   useEffect(() => {
     if (isYesterday(previousDate)) {
       setHabitList(prevHabitList => {
@@ -61,18 +50,6 @@ function App() {
 
   useEffect(() => {
     localStorage.setItem('habitList', JSON.stringify(habitList));
-    // console.log(new Date(habitList.at(-1).history.at(-3).date))
-    const PREVIOUS_YEAR_START_OF_WEEK = sub(startOfWeek(new Date(Date.now()), { weekStartsOn: 0 }), { years: 1 });
-    const CURRENT_YEAR_END_OF_WEEK = endOfWeek(new Date(Date.now()), { weekStartsOn: 0 });
-    const ANNUAL_HISTORY = eachDayOfInterval({ start: PREVIOUS_YEAR_START_OF_WEEK, end: CURRENT_YEAR_END_OF_WEEK }).map(day => ({ date: day, completed: false}))
-
-    console.log(ANNUAL_HISTORY[0].date)
-    console.log(habitList);
-
-    // console.warn('date from list', new Date(ANNUAL_HISTORY[0].date));
-    // console.warn('date.now', startOfDay(new Date(Date.now())))
-    // console.log(compareAsc(new Date(ANNUAL_HISTORY[ANNUAL_HISTORY.length - 3].date), startOfDay(new Date(Date.now()))))
-
   }, [habitList]);
 
   return (
@@ -151,12 +128,12 @@ function App() {
                       >
                         <div className="flex justify-between items-center gap-2">
                           <div
-                            className="p-2 border border-gray-900 cursor-pointer"
+                            className="py-1 px-2 border border-gray-900 cursor-pointer rounded-md"
                             >
                             Skip
                           </div>
                           <div
-                            className="p-2 border border-gray-900 cursor-pointer"
+                            className="py-1 px-2 border border-gray-900 cursor-pointer rounded-md"
                             onClick={
                               () => {
                                 setHabitList(prevHabitList => {
@@ -173,7 +150,7 @@ function App() {
                         <div className="flex justify-between items-center gap-2">
                           <p>Current Streak: {habitItem.currentStreak}</p>
                           <div
-                            className="p-2 border border-gray-900 cursor-pointer"
+                            className="py-1 px-2 border border-gray-900 cursor-pointer rounded-md"
                             onClick={
                               () =>
                               setHabitList(prevHabitList => {
