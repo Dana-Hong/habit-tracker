@@ -1,19 +1,19 @@
 import HabitSquare from "./HabitSquare";
 
+import { HabitDayStats } from "./App";
+
 type HabitWeekProps = {
-    className?: string
+    className?: string;
+    weekHistory: HabitDayStats[];
 }
 
-const HabitWeek = ({ className }: HabitWeekProps ) => {
+const HabitWeek = ({ className, weekHistory }: HabitWeekProps ) => {
+
     return (
         <div className="flex flex-col gap-1">
-            <HabitSquare />
-            <HabitSquare />
-            <HabitSquare />
-            <HabitSquare />
-            <HabitSquare />
-            <HabitSquare />
-            <HabitSquare />
+            {weekHistory.map((day, index) => {
+                return <HabitSquare key={index} dayHistory={day} />
+            })}
         </div>
     )
 }

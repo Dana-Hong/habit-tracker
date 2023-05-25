@@ -1,10 +1,14 @@
+import { HabitDayStats } from "./App";
+
 type HabitSquareProps = {
-    className?: string,
+    className?: string;
+    dayHistory: HabitDayStats;
+    
 }
 
-const HabitSquare = ({ className }: HabitSquareProps) => {
+const HabitSquare = ({ className, dayHistory }: HabitSquareProps) => {
     return (
-        <div className="h-4 w-4 border">
+        <div className={`h-4 w-4 border ${dayHistory.completed ? 'bg-red-300' : ''}`}>
         </div>
     )
 }
