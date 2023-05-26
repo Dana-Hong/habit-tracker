@@ -23,7 +23,7 @@ const HabitYear = ({ className, history }: HabitYearProps) => {
     
     
     return (
-        <div className="flex gap-1">
+        <div className="flex gap-0.5">
             {separateWeeks(history).map(week => (
                 <HabitWeek weekHistory={week} />
             ))}

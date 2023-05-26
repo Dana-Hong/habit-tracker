@@ -8,7 +8,7 @@ type HabitSquareProps = {
 
 const HabitSquare = ({ className, dayHistory }: HabitSquareProps) => {
     return (
-        <div className={`h-4 w-4 border ${dayHistory.completed ? 'bg-red-300' : ''}`}>
+        <div className={`h-4 w-4 rounded border ${dayHistory.completed ? 'bg-red-300' : 'bg-gray-800'}`}>
         </div>
     )
 }

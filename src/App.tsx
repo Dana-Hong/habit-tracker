@@ -56,11 +56,11 @@ function App() {
     <>
       <div className="h-screen w-screen bg-gray-900 flex flex-col justify-center items-center">
         <div>
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-3">
             {
               habitList.map((habitItem, habitIndex) =>
                 <div 
-                  className="flex"
+                  className="flex items-center gap-3"
                   key={habitIndex}
                   >
                     <div>
@@ -74,7 +74,7 @@ function App() {
                             })
                           }
                         }
-                        className="flex justify-between items-center p-2 bg-gray-300"
+                        className="flex justify-between items-center p-3 bg-gray-300"
                       >
                         <p className={habitItem.completed ? 'line-through' : ''} >{habitItem.name}</p>
                         <div
