@@ -54,16 +54,16 @@ function App() {
 
   return (
     <>
-      <div className="h-screen w-screen bg-gray-900 flex flex-col justify-center items-center">
+      <div className="h-screen w-screen bg-pink-700 px-4">
         <div>
-          <div className="flex flex-col gap-3">
+          <div className="flex flex-col gap-3 bg-red-500 p-2">
             {
               habitList.map((habitItem, habitIndex) =>
                 <div 
-                  className="flex items-center gap-3"
+                  className="flex justify-center items-center gap-3"
                   key={habitIndex}
                   >
-                    <div>
+                    <div className="w-full max-w-sm border-2 border-slate-700 rounded-md bg-blue-600">
                       <div
                         onClick={
                           () => {
@@ -74,7 +74,7 @@ function App() {
                             })
                           }
                         }
-                        className="flex justify-between items-center p-3 bg-gray-300"
+                        className="flex justify-between items-center p-3"
                       >
                         <p className={habitItem.completed ? 'line-through' : ''} >{habitItem.name}</p>
                         <div
@@ -124,7 +124,7 @@ function App() {
                         </div>
                       </div>
                       <div
-                        className={`${habitItem.showMenu ? '' : 'hidden'} flex flex-col gap-2 p-2 border border-t-black bg-gray-300`}
+                        className={`${habitItem.showMenu ? '' : 'hidden'} flex flex-col gap-2 p-2 rounded-b-md border border-t-black bg-gray-300`}
                       >
                         <div className="flex justify-between items-center gap-2">
                           <div
@@ -164,14 +164,13 @@ function App() {
                           </div>
                         </div>
                       </div>
-
                     </div>
-                  {habitItem.viewStats && <HabitYear history={habitItem.history} />}
+                  <HabitYear className={habitItem.viewStats ? 'opacity-0' : 'opacity-100'} history={habitItem.history} />
                 </div>
               )
             }
           </div>
-          <div className="flex flex-col gap-2 mt-2">
+          <div className="mx-auto max-w-sm flex justify-between gap-4 mt-2 bg-green-300">
             <input 
               value={habitName}
               onChange={(e) => setHabitName(e.target.value)}
@@ -179,7 +178,7 @@ function App() {
               name="habit"
               id="habit"
               placeholder="Habit name"
-              className="px-1"
+              className="max-w-sm px-1 rounded-lg basis-64"
             />
             <button
               onClick={
@@ -204,9 +203,9 @@ function App() {
                   setHabitName('');
                 }
               }
-              className="text-slate-200 bg-gray-700 py-2 px-4 rounded-lg border border-gray-800"
+              className="block text-slate-200 bg-gray-700 py-2 px-4 rounded-lg border border-gray-800"
               >
-              Add new habit
+              New habit
             </button>
           </div>
         </div>

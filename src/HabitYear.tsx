@@ -1,4 +1,3 @@
-import HabitSquare from "./HabitSquare";
 import HabitWeek from "./HabitWeek";
 
 import { HabitDayStats } from "./App";
@@ -23,7 +22,7 @@ const HabitYear = ({ className, history }: HabitYearProps) => {
     
     
     return (
-        <div className="flex gap-0.5">
+        <div className={`flex gap-0.5`}>
             {separateWeeks(history).map(week => (
                 <HabitWeek weekHistory={week} />
             ))}
