@@ -10,7 +10,7 @@ type HabitWeekProps = {
 const HabitWeek = ({ className, weekHistory }: HabitWeekProps ) => {
 
     return (
-        <div className="flex flex-col gap-1">
+        <div className="flex flex-col gap-0.5">
             {weekHistory.map((day, index) => {
                 return <HabitSquare key={index} dayHistory={day} />
             })}

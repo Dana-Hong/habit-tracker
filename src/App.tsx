@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-import { compareAsc, isYesterday, startOfDay, startOfWeek, endOfWeek, eachDayOfInterval, sub } from "date-fns";
+import { compareAsc, isYesterday, startOfDay, startOfWeek, startOfMonth, endOfMonth, eachDayOfInterval, sub } from "date-fns";
 
 import EmptyCircle from "./checkbox-blank-circle-line";
 import CheckBoxCircle from "./checkbox-circle-line";
@@ -26,16 +26,31 @@ function App() {
   const [habitName, setHabitName] = useState<string>('');
   const [previousDate] = useState<Date>(new Date(JSON.parse(localStorage.getItem('prevDate') as string)));
 
+  const getLastTwelveMonthDateIntervals = () => {
+    const LAST_YEAR_IN_MONTHS = [];
+    // const LAST_ELEVEN_MONTHS = [];
+    const PREV_YEAR_START_OF_FIRST_MONTH = startOfWeek(sub(new Date(Date.now()), { years: 1 }), { weekStartsOn: 0 });
+    const PREV_YEAR_END_OF_FIRST_MONTH = endOfMonth(sub(new Date(Date.now()), { years: 1 }));
+    const PREV_YEAR_FIRST_MONTH = eachDayOfInterval({ start: PREV_YEAR_START_OF_FIRST_MONTH, end: PREV_YEAR_END_OF_FIRST_MONTH }).map(day => ({ date: day, completed: false}));
+    // const CURRENT_YEAR_START_OF_MONTH;
+    // const CURRENT_YEAR_END_OF_MONTH = endOfMonth()
 
-  /**
-   * use startOfWeek to get the beginning of the week from Today's date
-   * use endOfWeek to get the beginning of the week from Today's date
-   * use eachDayofInteral function get generate array of Dates using startOfWeek and endOfWeek
-   * use map to convert each date into object that has the date, and "completed" field
-   * use this array to create habitYear
-   * each "Date object" needs to know whether it is complete or not
-   * It is complete when it was completed on that day
-   */
+    LAST_YEAR_IN_MONTHS.push(PREV_YEAR_FIRST_MONTH);
+
+    for (let i = 10; i >= 0; i--) {
+      const month = sub(new Date(Date.now()), { months: i });
+      const monthStart = startOfMonth(month);
+      const monthEnd = endOfMonth(month);
+      const monthInterval = eachDayOfInterval({ start: monthStart, end: monthEnd });
+
+      LAST_YEAR_IN_MONTHS.push(monthInterval);
+    }
+
+    return LAST_YEAR_IN_MONTHS;
+    
+  }
+
+  console.log(getLastTwelveMonthDateIntervals());
 
   useEffect(() => {
     if (isYesterday(previousDate)) {
@@ -61,32 +76,59 @@ function App() {
 
   useEffect(() => {
     localStorage.setItem('habitList', JSON.stringify(habitList));
-    // console.log(new Date(habitList.at(-1).history.at(-3).date))
-    const PREVIOUS_YEAR_START_OF_WEEK = sub(startOfWeek(new Date(Date.now()), { weekStartsOn: 0 }), { years: 1 });
-    const CURRENT_YEAR_END_OF_WEEK = endOfWeek(new Date(Date.now()), { weekStartsOn: 0 });
-    const ANNUAL_HISTORY = eachDayOfInterval({ start: PREVIOUS_YEAR_START_OF_WEEK, end: CURRENT_YEAR_END_OF_WEEK }).map(day => ({ date: day, completed: false}))
-
-    console.log(ANNUAL_HISTORY[0].date)
-    console.log(habitList);
-
-    // console.warn('date from list', new Date(ANNUAL_HISTORY[0].date));
-    // console.warn('date.now', startOfDay(new Date(Date.now())))
-    // console.log(compareAsc(new Date(ANNUAL_HISTORY[ANNUAL_HISTORY.length - 3].date), startOfDay(new Date(Date.now()))))
-
   }, [habitList]);
 
   return (
     <>
-      <div className="h-screen w-screen bg-gray-900 flex flex-col justify-center items-center">
+      <div className="h-screen w-screen bg-gray-950 px-4 text-slate-300">
+        <h1 className="text-center p-12 text-5xl">Habit Tracker</h1>
+        <div className="mx-auto max-w-sm flex justify-between gap-4 mt-2">
+            <input 
+              value={habitName}
+              onChange={(e) => setHabitName(e.target.value)}
+              type="text"
+              name="habit"
+              id="habit"
+              placeholder="Habit name"
+              className="max-w-sm pl-3 placeholder-gray-400 rounded-lg basis-64 outline-green-700 bg-gray-700"
+            />
+            <button
+              onClick={
+                () => {
+                  if (!habitName) return;
+                  
+                  const PREVIOUS_YEAR_START_OF_WEEK = startOfWeek(sub(new Date(Date.now()), { years: 1 }), { weekStartsOn: 0 });
+                  const CURRENT_YEAR_END_OF_WEEK = new Date(Date.now());
+                  const ANNUAL_HISTORY = eachDayOfInterval({ start: PREVIOUS_YEAR_START_OF_WEEK, end: CURRENT_YEAR_END_OF_WEEK }).map(day => ({ date: day, completed: false}))
+
+                  setHabitList(prevHabitList => 
+                    [...prevHabitList,
+                      { 
+                        name: habitName,
+                        completed: false,
+                        currentStreak: 0,
+                        history: ANNUAL_HISTORY,
+                        showMenu: false,
+                        viewStats: false
+                      } 
+                    ]);
+                  setHabitName('');
+                }
+              }
+              className="block bg-gray-700 py-2 px-4 rounded-lg border border-gray-800"
+              >
+              New habit
+            </button>
+          </div>
         <div>
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-8 pt-12">
             {
               habitList.map((habitItem, habitIndex) =>
                 <div 
-                  className="flex"
+                  className="flex justify-center items-start gap-3"
                   key={habitIndex}
                   >
-                    <div>
+                    <div className="w-full max-w-sm border-2 border-slate-700 rounded-md bg-gray-900 cursor-pointer">
                       <div
                         onClick={
                           () => {
@@ -97,7 +139,7 @@ function App() {
                             })
                           }
                         }
-                        className="flex justify-between items-center p-2 bg-gray-300"
+                        className="flex justify-between items-center p-3"
                       >
                         <p className={habitItem.completed ? 'line-through' : ''} >{habitItem.name}</p>
                         <div
@@ -112,7 +154,8 @@ function App() {
                                       history: eachDayOfInterval(
                                         { 
                                           start: startOfWeek(sub(new Date(Date.now()), { years: 1 }), { weekStartsOn: 0 }),
-                                          end: endOfWeek(new Date(Date.now()), { weekStartsOn: 0 })})
+                                          end: new Date(Date.now()),
+                                        })
                                             .map(day => 
                                               {
                                                 if (compareAsc(new Date(day), startOfDay(new Date(Date.now()))) === 0) {
@@ -140,23 +183,23 @@ function App() {
                           >
                           {
                             habitItem.completed ? 
-                            <CheckBoxCircle className="h-6 w-6" />
+                            <CheckBoxCircle className="h-6 w-6 fill-green-600" />
                             :
-                            <EmptyCircle className="h-6 w-6"/>
+                            <EmptyCircle className="h-6 w-6 fill-slate-400"/>
                           }
                         </div>
                       </div>
                       <div
-                        className={`${habitItem.showMenu ? '' : 'hidden'} flex flex-col gap-2 p-2 border border-t-black bg-gray-300`}
+                        className={`${habitItem.showMenu ? '' : 'hidden'} flex flex-col gap-2 p-4 text-sm border-t-2 rounded-b-md border-t-gray-800 bg-gray-900`}
                       >
                         <div className="flex justify-between items-center gap-2">
                           <div
-                            className="p-2 border border-gray-900 cursor-pointer"
+                            className="py-1 px-2 border-2 bg-yellow-600 bg-opacity-10 border-yellow-600 cursor-pointer rounded-md"
                             >
                             Skip
                           </div>
                           <div
-                            className="p-2 border border-gray-900 cursor-pointer"
+                            className="py-1 px-2 border-2 bg-blue-600 bg-opacity-10 border-blue-600 cursor-pointer rounded-md"
                             onClick={
                               () => {
                                 setHabitList(prevHabitList => {
@@ -173,7 +216,7 @@ function App() {
                         <div className="flex justify-between items-center gap-2">
                           <p>Current Streak: {habitItem.currentStreak}</p>
                           <div
-                            className="p-2 border border-gray-900 cursor-pointer"
+                            className="py-1 px-2 border-2 bg-red-600 bg-opacity-10 border-red-600 cursor-pointer rounded-md"
                             onClick={
                               () =>
                               setHabitList(prevHabitList => {
@@ -187,50 +230,11 @@ function App() {
                           </div>
                         </div>
                       </div>
-
                     </div>
-                  {habitItem.viewStats && <HabitYear history={habitItem.history} />}
+                  <HabitYear className={habitItem.viewStats ? 'opacity-0' : 'opacity-100'} history={habitItem.history} />
                 </div>
               )
             }
-          </div>
-          <div className="flex flex-col gap-2 mt-2">
-            <input 
-              value={habitName}
-              onChange={(e) => setHabitName(e.target.value)}
-              type="text"
-              name="habit"
-              id="habit"
-              placeholder="Habit name"
-              className="px-1"
-            />
-            <button
-              onClick={
-                () => {
-                  if (!habitName) return;
-                  
-                  const PREVIOUS_YEAR_START_OF_WEEK = startOfWeek(sub(new Date(Date.now()), { years: 1 }), { weekStartsOn: 0 });
-                  const CURRENT_YEAR_END_OF_WEEK = endOfWeek(new Date(Date.now()), { weekStartsOn: 0 });
-                  const ANNUAL_HISTORY = eachDayOfInterval({ start: PREVIOUS_YEAR_START_OF_WEEK, end: CURRENT_YEAR_END_OF_WEEK }).map(day => ({ date: day, completed: false}))
-
-                  setHabitList(prevHabitList => 
-                    [...prevHabitList,
-                      { 
-                        name: habitName,
-                        completed: false,
-                        currentStreak: 0,
-                        history: ANNUAL_HISTORY,
-                        showMenu: false,
-                        viewStats: false
-                      } 
-                    ]);
-                  setHabitName('');
-                }
-              }
-              className="text-slate-200 bg-gray-700 py-2 px-4 rounded-lg border border-gray-800"
-              >
-              Add new habit
-            </button>
           </div>
         </div>
       </div>
