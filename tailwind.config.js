@@ -7,8 +7,11 @@ export default {
     "node_modules/flowbite-react/**/*.{js,jsx,ts,tsx}"
   ],
   theme: {
+    fontFamily: {
+      'Inter': ['Inter', 'sans-serif']
+    },
     screens: {
-      'xs': '375px',
+      'xs': '320px',
     },
     extend: {},
   },
